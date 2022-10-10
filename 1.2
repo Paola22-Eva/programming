@@ -1,0 +1,15 @@
+chislo=str(int(input()))
+if chislo[0]=="-":
+    chislo=chislo[1:][::-1]
+    while chislo[0]=="0":
+        chislo=chislo[1:]
+    chislo="-"+chislo
+else:
+    chislo=chislo[::-1]
+    while chislo[0]=="0":
+        chislo=chislo[1:]
+chislo=int(chislo)
+if (-2)**7<=chislo<=(2**7-1):
+    print(chislo)
+else:
+    print("no solution")

@@ -1,0 +1,41 @@
+stroka, nom="перфекционист", int(input())
+if nom%2!=0:
+    flag = True
+else:
+    flag = False
+prom=(nom-2)*2+2
+otvet=str()
+kolsim=len(stroka)
+for ind in range(nom):
+    inde=ind
+    stroka2=""
+    prom2=prom
+    if ind==0 or ind==(nom-1):
+        while inde<kolsim:
+            stroka2+=stroka[inde]
+            inde+=prom
+        otvet+=stroka2
+        stroka2=""
+    elif flag==True and inde==nom//2:
+        prom2=prom//2
+        while inde<kolsim:
+            stroka2+=stroka[inde]
+            inde+=prom2
+        otvet+=stroka2
+        stroka2=""
+    else:
+        flag1=True
+        prom2=prom-2*ind
+        while inde<kolsim:
+            stroka2+=stroka[inde]
+            inde+=prom2
+            if flag1==True:
+                prom2=prom-prom2
+                flag=False
+            else:
+                prom2=prom-2*ind
+                flag=True
+        otvet+=stroka2
+        stroka2=""
+print(otvet)      
+        
