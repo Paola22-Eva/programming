@@ -1,12 +1,17 @@
-stroka=input().strip().lower()[::-1]+" "
-promstroka= ""
-otvet= ""
-for byk in stroka:
-  if byk==" ":
-    promstroka=promstroka[::-1]+" "
-    otvet+=promstroka
-    promstroka=""
-  else:
-    promstroka+=byk
+def main():
+  stroka=input().strip().lower()[::-1]+" "
+  promstroka= ""
+  otvet= ""
+  for byk in stroka:
+    if byk==" ":
+      
+      promstroka=promstroka[::-1]+" "
+      otvet+=promstroka
+      promstroka=""
+    else:
+      promstroka+=byk
  
-print(otvet.strip().capitalize())   
+  print(otvet.strip().capitalize())   
+
+if __name__=="__main__":
+   main()    
