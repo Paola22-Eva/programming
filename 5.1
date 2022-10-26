@@ -1,0 +1,18 @@
+
+def funcName(list1, list2):
+  list1=set(list1)
+  list2= set(list2)
+  ans1=list(list1.intersection(list2))
+  ans2=list(list1.symmetric_difference(list2))
+  ans3=list(list1.difference(list2))
+  ans4=list(list2.difference(list1))
+  print("1) "+" ".join(map(str, ans1)), "2) "+" ".join(map(str, ans2)), "3) "+" ".join(map(str, ans3)), "4) "+" ".join(map(str, ans4)), sep="\n")
+
+list1, list2 = [0, 33, 37, 6, 10, 44, 13, 47, 16, 18, 22, 25], [1, 38, 48, 8, 41, 7, 12, 47, 16, 40, 20, 23, 25]
+
+if __name__== "__main__":
+  funcName(list1, list2)
+
+  
+
+
