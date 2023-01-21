@@ -14,7 +14,6 @@ def  main():
                 list_of_str[n] = [0] 
     answer = []
     for i in range(len(list_of_groups)):
-        print(type(list_of_groups[i][0]))
         if not(type(list_of_groups[i][0]) == list):
             answer.append(list_of_groups[i])
     print(sorted(answer))
