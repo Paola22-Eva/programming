@@ -1,0 +1,166 @@
+def main():
+
+  input_file = open("input", "r")
+  output_file = open("output", "r+")
+
+  char_input = input_file.readline().split()
+  buffer = [int(sym) for sym in char_input]
+
+  N, L, K = buffer[0], buffer[1], buffer[2]
+
+  pre_figures = []
+  for i in range(K):
+    pre_figures.append(
+      [int(coord_buf) for coord_buf in input_file.readline().split()])
+
+  def print_board(board):
+    for i in range(len(board)):
+      print(board[i])
+
+  def check_board(board):
+    num_of_free = 0
+    for j in range(N):
+      for i in range(N):
+        if board[i][j] == "0":
+          num_of_free += 1
+    return num_of_free
+
+  def mark_hit(board, i, j):
+    if (i - 3 >= 0):
+      if (j - 1 >= 0):
+        board[i - 3][j - 1] = ("*")
+      if (j + 1 < N):
+        board[i - 3][j + 1] = ("*")
+
+    if (i - 1 >= 0):
+      if (j - 3 >= 0):
+        board[i - 1][j - 3] = ("*")
+      if (j + 3 < N):
+        board[i - 1][j + 3] = ("*")
+
+    if (i + 1 < N):
+      if (j - 3 >= 0):
+        board[i + 1][j - 3] = ("*")
+      if (j + 3 < N):
+        board[i + 1][j + 3] = ("*")
+
+    if (i + 3 < N):
+      if (j - 1 >= 0):
+        board[i + 3][j - 1] = ("*")
+      if (j + 1 < N):
+        board[i + 3][j + 1] = ("*")
+    
+    
+
+  def next_safe_spot(board, shift):
+    left_to_skip = shift
+    N = len(board)
+    for j in range(N):
+      for i in range(N):
+        if board[i][j] == "#" or board[i][j] == "*":
+          pass
+        else:
+          if left_to_skip > 0:
+            left_to_skip -= 1
+          else:
+            return [i, j]
+
+  def build_board(N, prev_dots):
+    board = [['0' for i in range(N)] for j in range(N)]
+    for coord_buf in prev_dots:
+      x, y = coord_buf[0], coord_buf[1]
+      board[x][y] = "#"
+    for i in prev_dots:
+      mark_hit(board, i[0], i[1])
+    return board
+
+  def all_options(dots, L, K):
+    prev_dots = dots
+    def repetition(array, K):
+      all_aray, l = 0, len(array[0]) - K
+      while all_aray != len(array):
+        f_array = array[all_aray]
+
+        
+        number1, all1_aray, number = (len(array)-(all_aray+1)), 0, all_aray+1
+        while all1_aray!= number1:
+          b, chet = array[number], 0
+          for n1 in range(K, len(f_array)):
+            for n2 in range(K, len(f_array)):
+              if f_array[n1][0] == b[n2][0]:
+                if f_array[n1][1] == b[n2][1]:
+                  chet += 1
+
+          if chet == l:
+            array.pop(number)
+            number -= 1
+
+          all1_aray += 1
+          number+=1
+
+        all_aray += 1
+ 
+      return array
+
+
+
+    def dig_deeper(prev_dots):
+      global flag
+      flag = True
+      sub_solutions = []
+      new_dots = prev_dots
+      base_board = build_board(N, prev_dots)
+      number_of_safe = check_board(base_board)
+      if number_of_safe > 0:
+        for i in range(number_of_safe):
+          target = next_safe_spot(base_board, i)
+
+          prom_dots = new_dots.copy()
+          new_dots.append(target)
+          sub_solutions.append(new_dots)
+
+          new_dots = prom_dots
+
+        return sub_solutions
+      else:
+        flag = False
+
+        return 0
+    
+    options = dig_deeper(prev_dots)
+    if options!=0:
+      L -= 1
+      alloptions, prom_options = [], options
+      while L > 0:
+        for mass in prom_options:
+          y = dig_deeper(mass)
+          if flag == True:
+            for e in y:
+              alloptions.append(e)
+        prom_options = alloptions
+        alloptions = []
+        L -= 1
+      prom_options = repetition(prom_options, K)
+      return prom_options
+    else:
+      return "no solution"
+   
+
+  base_board = build_board(N, pre_figures)
+  print_board(base_board)
+
+  foo = all_options(pre_figures, L, K)
+
+  if foo=="no solution":
+    output_file.write(foo)
+  else:
+    for y in foo:
+      for t in y:
+        output_file.write(str(tuple(t)))
+      output_file.write('\n')
+
+  input_file.close()
+  output_file.close()
+
+if __name__ == "__main__":
+  main()
