@@ -1,3 +1,4 @@
+import time
 import pygame as pg
 import tkinter as tk
 import sys
@@ -8,7 +9,7 @@ class TheFirstWindow(tk.Tk):
     __slots__ = ["start_time", "n", "l", "k"]
     def __init__(self):
         super().__init__()
-        names, entry_spis=["Размер доски(N)", "Кол-во требуемых фигур(L)", "Кол-во размещенных фигур(K)", "Запустить"], []
+        names, entry_spis=("Размер доски(N)", "Кол-во требуемых фигур(L)", "Кол-во размещенных фигур(K)", "Запустить"), []
         check_reg, num_2=self.register(self.check), 0
         for num in range(3):
             tk.Label(text=names[num]).grid(row=num_2, column=0)
@@ -48,7 +49,7 @@ class TheSecondWindow(tk.Tk):
           frame_main.grid(row=0, column=1, sticky="ns")
         else:
           frame_main=self
-        self.n, self.l, self.k, self.entry_spis_2=n, l, k, []
+        self.n, self.l, self.k, self.entry_spis_2=n, l, k, ()
         check_reg, self.entry_spis, num_2=self.register(self.check_2), [], 1
         tk.Label(frame_main, text="Введите координаты").grid(row=0, column=0)
         for prom_k in range(1, self.k+1):
@@ -72,8 +73,7 @@ class TheSecondWindow(tk.Tk):
 
     def create_the_apis(self):
         """Метод, вызывающий класс для проверки координат"""
-        self.entry_spis_2=[[int((input.get()).split()[0]), int((input.get()).split()[1])] for input in self.entry_spis]
-        #print("--- %s seconds ---" % (time.time() - self.start_time))
+        self.entry_spis_2=tuple((int((input.get()).split()[0]), int((input.get()).split()[1])) for input in self.entry_spis)
         CheckCoords(self.entry_spis_2, self.n, self.l, self.k)
           
             
@@ -106,8 +106,8 @@ class CheckCoords(tk.Toplevel):
 
   def mark_hit(self, i, j, flag):
       """Метод, проверяющий, находится ли фигура под боем другой, или расставляющий на доске места, куда фигура может походить"""
-      variants_i=[i-3, i+3, i+1, i-1]
-      variants_j=[[j-1, j+1], [j-3, j+3]]
+      variants_i=(i-3, i+3, i+1, i-1)
+      variants_j=((j-1, j+1), (j-3, j+3))
 
       for one_cor in range(len(variants_i)):
         if 0<=variants_i[one_cor]<self.N:
@@ -125,7 +125,6 @@ class CheckCoords(tk.Toplevel):
               elif flag==False:
                   self.board[variants_i[one_cor]][variants_j[num][two_cor]] = "*"
               else:
-                  
                   if self.board[variants_i[one_cor]][variants_j[num][two_cor]] =="#":
                     return False
 
@@ -141,11 +140,13 @@ class Board:
     __slots__ = ["start_time", "N", "L", "K", "prev_dots", "first_coords", "all_coords", "board"]
     def __init__(self, prev_dots, n, l, k):
         self.N, self.K=n, k
-        self.prev_dots=prev_dots
-        self.first_coords, self.all_coords=[], []
+        self.prev_dots=tuple(prev_dots)
+        self.first_coords, self.all_coords=(), []
         self.board=self.build_board(prev_dots, True)
-        self.all_options(l, [0, 0])
-        if self.first_coords==[]:
+        self.start_time=time.time()
+        self.all_options(l, (0, 0))
+        print("--- %s seconds ---" % (time.time() - self.start_time))
+        if self.first_coords==():
           CheckCoords.error_window("Нет решений!")
         else:
           self.board=self.build_board(self.first_coords, False)
@@ -153,26 +154,24 @@ class Board:
     
     def build_board(self, prev_dots, flag):
       """Метод создает доску для поиска новых решений или для ее отрисовки"""
-      self.board = [['0' for i in range(self.N)] for j in range(self.N)]
       if flag==True:
+        self.board = [['0' for _ in range(self.N)] for _ in range(self.N)]
         for coord_buf in prev_dots:
           self.board[int(coord_buf[0])][int(coord_buf[1])] = "#"
       elif flag==False:
         for coord_buf in range(0, len(self.first_coords)):
-          if self.first_coords[coord_buf] in self.prev_dots:
-            self.board[int(prev_dots[coord_buf][0])][int(prev_dots[coord_buf][1])] = "#"
-          else:
+          if self.first_coords[coord_buf] not in self.prev_dots:
             self.board[int(prev_dots[coord_buf][0])][int(prev_dots[coord_buf][1])] = "%"
       for i in prev_dots:
-        CheckCoords.mark_hit(self, int(i[0]), int(i[1]), False)
+          CheckCoords.mark_hit(self, int(i[0]), int(i[1]), False)
       return self.board
     
     def all_options(self, L, board):
       """Метод, ищущий места для постановки фигур и записывающий в массив все варианты координат фигур на доске"""
       if L==0:
-        pod_mass=[[i, j] for i in range(len(self.board)) for j in range(len(self.board[i])) if self.board[i][j]=="#"]
-        if self.first_coords==[]:
-          self.first_coords=[p for p in pod_mass]
+        pod_mass=tuple((i, j) for i in range(len(self.board)) for j in range(len(self.board[i])) if self.board[i][j]=="#")
+        if self.first_coords==():
+          self.first_coords=tuple(p for p in pod_mass)
         self.all_coords.append(pod_mass)
         
       for x in range(board[0], len(self.board)):
@@ -183,7 +182,7 @@ class Board:
         for y in range(start, len(self.board[x])):
           if self.board[x][y]=="0" and CheckCoords.mark_hit(self, x, y, None)==None:
             self.board[x][y]="#"
-            self.all_options(L-1, [x, y])
+            self.all_options(L-1, (x, y))
             self.board[x][y]="0"
 
  
@@ -222,6 +221,7 @@ class Draw_the_Board:
       for y in range(self.N):
         
         if self.board[y][x]=="#":
+
           pg.draw.rect(self.window, (144, 53, 59), (cell * x, cell*y, cell, cell))    
           
         elif self.board[y][x]=="%":
@@ -250,11 +250,10 @@ class Draw_the_Board:
     file_output=open('Все варианты расстановки', 'w+', encoding='utf-8')
     for var in self.all_coords:
       for number in var:
-        file_output.write(f"{tuple(number)} ")
+        file_output.write(f"{number} ")
       file_output.write("\n")
     file_output.close()
     print("Все решения записаны в файл!")
     
 if __name__=="__main__":
   TheFirstWindow().mainloop()
-
