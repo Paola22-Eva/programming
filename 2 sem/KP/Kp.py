@@ -1,4 +1,4 @@
-import time
+
 import pygame as pg
 import tkinter as tk
 import sys
@@ -6,7 +6,7 @@ import customtkinter
 
 class TheFirstWindow(tk.Tk):
     """Класс, создающий окно для ввода N, L, K и проверяющий правильность введенных данных"""
-    __slots__ = ["start_time", "n", "l", "k"]
+    __slots__ = ["n", "l", "k"]
     def __init__(self):
         super().__init__()
         names, entry_spis=("Размер доски(N)", "Кол-во требуемых фигур(L)", "Кол-во размещенных фигур(K)", "Запустить"), []
@@ -41,7 +41,7 @@ class TheFirstWindow(tk.Tk):
 
 class TheSecondWindow(tk.Tk):
     """Класс, создающий окно для введения координат"""
-    __slots__ = ["start_time", "n", "l", "k", "entry_spis_2", "entry_spis"]
+    __slots__ = ["n", "l", "k", "entry_spis_2", "entry_spis"]
     def __init__(self, n, l, k):
         super().__init__()
         if k>3:
@@ -137,15 +137,13 @@ class CheckCoords(tk.Toplevel):
 
 class Board:
     """Класс для поиска всех вариантов расстановки фигур и создания матрицы в виде доски для дальнейшей ее отрисовки в pygame"""
-    __slots__ = ["start_time", "N", "L", "K", "prev_dots", "first_coords", "all_coords", "board"]
+    __slots__ = ["N", "L", "K", "prev_dots", "first_coords", "all_coords", "board"]
     def __init__(self, prev_dots, n, l, k):
         self.N, self.K=n, k
         self.prev_dots=tuple(prev_dots)
         self.first_coords, self.all_coords=(), []
         self.board=self.build_board(prev_dots, True)
-        self.start_time=time.time()
         self.all_options(l, (0, 0))
-        print("--- %s seconds ---" % (time.time() - self.start_time))
         if self.first_coords==():
           CheckCoords.error_window("Нет решений!")
         else:
@@ -188,7 +186,7 @@ class Board:
  
 class Draw_the_Board:
   """Класс для создания окна в pygame с графическим представлением доски и кнопки для записи всех решений в файл"""
-  __slots__ = ["start_time", "N", "window", "button", "time", "FPS", "all_coords", "board"]
+  __slots__ = ["N", "window", "button", "time", "FPS", "all_coords", "board"]
   def __init__(self, N, board, all_coords):
     pg.init()
     self.N, self.board=N, board
@@ -254,6 +252,8 @@ class Draw_the_Board:
       file_output.write("\n")
     file_output.close()
     print("Все решения записаны в файл!")
-    
+      
 if __name__=="__main__":
   TheFirstWindow().mainloop()
+
+          
