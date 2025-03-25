@@ -1,8 +1,0 @@
-spisok = input()
-import numpy as np
-
-spisok = np.array(spisok).transpose()
-for i in range(len(spisok)):
-  spisok[i] = spisok[i][::-1]
-
-print(spisok)
