@@ -1,0 +1,75 @@
+from sympy import *
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import integrate
+
+def main():
+  znach=np.arange(0, 1, 0.001)
+  x=Symbol("x")
+  y=(2**(x**4))*cos(20*(x**2)+5)
+  plt.subplot(3, 3, 1)
+  funx=lambdify(x, y, 'numpy')
+  plt.plot(znach, funx(znach))
+  plt.title("График")
+  
+  maxsty=max(funx(znach))
+  minsty=min(funx(znach))
+  spis=list(funx(znach))
+  maxstx=znach[spis.index(maxsty)]
+  minstx=znach[spis.index(minsty)]
+  print("Наибольшее и наименьшее значения: ", maxsty, minsty)
+
+  plt.scatter(maxstx, maxsty)
+  plt.scatter(minstx, minsty)
+
+  proisy=y.diff(x)
+  funx1=lambdify(x, proisy, 'numpy')
+  plt.subplot(3, 3, 2)
+  plt.plot(znach, funx1(znach))
+  print("1-я произ.: ", proisy)
+
+  proisy1=proisy.diff(x)
+  funx2=lambdify(x, proisy1, 'numpy')
+  plt.subplot(3, 3, 2)
+  plt.title("Производные")
+  plt.plot(znach, funx2(znach))
+  print("2-я произ.: ", proisy1)
+
+  x1=1
+  y1=(2**(x1**4))*cos(20*(x1**2)+5)
+  y11=log(2)*((x1**3)*2**((x1**4)+2))*cos(20*x1**2+5)-5*x1*2**((x1**4)+3)*sin(20*(x1**2)+5)
+  ykas=y1+(y11)*(znach-x1)
+  ynor=y1-(1/y11)*(znach-x1)
+  plt.subplot(3, 3, 1)
+  plt.plot(znach, ykas, '-.')
+  plt.plot(znach, ynor,'-.')
+
+  plt.subplot(3, 3, 3)
+  plt.title("Касательное расслоение")
+  for x1 in range(0, 1, 1):
+    kas=funx(x1)+funx1(x1)*(znach-x1)
+    plt.plot(znach, kas)
+    
+  def f(x):
+    return (2**(x**4))*cos(20*(x**2)+5)
+  dlina, er=integrate.quad(f, 0, 1)
+  print("Длина кривой: ", dlina)
+    
+  
+  plt.show()
+
+
+"""
+x = Symbol('x')
+In [4]: y = x**2 + 1
+In [5]: yprime = y.diff(x)
+In [6]: yprime
+Out[6]: 2⋅x
+
+In [7]: f = lambdify(x, yprime, 'numpy')
+In [8]: f(np.ones(5))
+Out[8]: [ 2.  2.  2.  2.  2.]
+"""
+
+if __name__=="__main__":
+  main()

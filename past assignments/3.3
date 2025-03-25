@@ -1,0 +1,22 @@
+def  main():
+    list_of_str = [x for x in input().split(" ")]
+    list_of_groups = []
+    length = len(list_of_str)
+    for i in range(length):
+        list_of_groups.append([list_of_str[i]])
+        parent_lenght = len(list_of_str[i])
+        parent = set([x for x in list_of_str[i]])
+        for n in range(i+1, length):
+            child_lenght = len(list_of_str[n])
+            child = set([x for x in list_of_str[n]])
+            if parent_lenght == child_lenght and parent == child:
+                list_of_groups[i].append(list_of_str[n])
+                list_of_str[n] = [0] 
+    answer = []
+    for i in range(len(list_of_groups)):
+        if not(type(list_of_groups[i][0]) == list):
+            answer.append(list_of_groups[i])
+    print(sorted(answer))
+
+if __name__ == "__main__":
+    main()

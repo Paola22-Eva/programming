@@ -1,0 +1,36 @@
+import itertools
+
+def combinations(code):
+    variations = [] 
+    neighbours = {
+            "1": [1, 2, 4],
+            "2": [2, 1, 3, 5],
+            "3": [3, 2, 6],
+            "4": [4, 1, 5, 7],
+            "5": [5,2,4,6,8],
+            "6": [6,3,5,9],
+            "7": [7,4,8],
+            "8": [8,5,7,9,0],
+            "9": [9,6,8],
+            "0": [0,8]}
+    for i in range(len(code)):
+        variations+=(neighbours[code[i]]) 
+
+    recieved_data = set(itertools.combinations(variations,len(code)))
+    recieved_data = sorted(list(recieved_data)) 
+    recieved_data = ["".join([str(y) for y in x]) for x in recieved_data] 
+    
+    for i in range(len(recieved_data)):
+        for n in range(len(recieved_data[i])):
+            if int(recieved_data[i][n]) not in neighbours[code[n]]: 
+                recieved_data[i] = "deleted" 
+                break
+    recieved_data = sorted(list(set(recieved_data)))[:-1] 
+    return recieved_data
+
+def  main():
+    code = input()
+    print(combinations(code))
+
+if __name__ == "__main__":
+    main()

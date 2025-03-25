@@ -1,0 +1,28 @@
+def main():
+  n=int(input())
+  spis=[tuple([input(), int(input())]) for _ in range(n)]
+  
+  def bank(spis, n):
+    dengi, banki=[], []
+    dengi.append([spis[0][1], spis[0]])
+    if spis[0][1]>spis[1][1]:
+      dengi.append([spis[0][1], spis[0]])
+    else:
+      dengi.append([spis[1][1], spis[1]])
+      
+    for j in range(2, n):
+      if dengi[j-2][0]+spis[j][1]<dengi[j-1][0]:
+        dengi.append(dengi[j-1])
+      else:
+        banki.append(dengi[j-2][0]+spis[j][1])
+        for simv in range(1, len(dengi[j-2])):
+          banki.append(dengi[j-2][simv])
+        banki.append(spis[j])
+        dengi.append(banki)
+        banki=[]
+    
+    return(dengi[-1])
+  print(bank(spis, n))
+
+if __name__=="__main__":
+  main()

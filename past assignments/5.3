@@ -1,0 +1,21 @@
+
+def main():
+  confeti=int(input())
+  paketi=int(input())
+
+  def kombinati(con, pak):
+    if con==pak or pak==1:
+      return 1
+    elif pak==0:
+      return 0
+    else:
+      return pak*kombinati(con-1, pak)+kombinati(con-1, pak-1)
+
+  if paketi>confeti:
+      print("No solution")
+  else:
+      print(kombinati(confeti, paketi))
+
+if __name__=="__main__":
+  main()
+
