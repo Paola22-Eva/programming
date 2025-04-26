@@ -1,0 +1,59 @@
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+
+    # Set environment variables directly in the compose file
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      # DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: "postgresql://postgres:0000@db:5432/news_site_bd"
+
+    # Set environment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - ./src/app:/src/app
+      - ./public:/app/public
+    restart: always
+    # ports:
+    #   - 3000:3000
+    networks:
+      - my_network
+    depends_on:
+      db:
+        condition: service_started
+
+  nginx: 
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - my_network
+    depends_on:
+      - next-app
+      
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "0000"
+      POSTGRES_DB: news_site_bd
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    external: true
+
+volumes:
+  postgres_data:
